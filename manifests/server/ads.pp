@@ -1,8 +1,6 @@
+# == Class samba::server::ads
 # This module join samba server to Active Dirctory
 #
-# Copyright (c) 2013 Lebedev Vadim, abraham1901 at g mail dot c o m
-# Licensed under the MIT License, http://opensource.org/licenses/MIT
-
 class samba::server::ads($ensure = present,
   $winbind_acct               = 'admin',
   $winbind_pass               = 'SecretPass',
@@ -30,7 +28,7 @@ class samba::server::ads($ensure = present,
     default  => 'krb5-user',
   }
 
-  if $osfamily == "RedHat" {
+  if $osfamily == 'RedHat' {
     if $operatingsystemrelease =~ /^6\./ {
       $winbind_package = 'samba-winbind'
     } else {
@@ -82,10 +80,10 @@ class samba::server::ads($ensure = present,
 
   $changes=$nsswitch ? {
       true => [
-        "set database[. = 'passwd']/service[1] compat",
-        "set database[. = 'passwd']/service[2] winbind",
-        "set database[. = 'group']/service[1] compat",
-        "set database[. = 'group']/service[2] winbind",
+        'set database[. = "passwd"]/service[1] compat',
+        'set database[. = "passwd"]/service[2] winbind',
+        'set database[. = "group"]/service[1] compat',
+        'set database[. = "group"]/service[2] winbind',
       ],
       false => [
         "rm /files/${nss_file}/database[. = 'passwd']/service[. = 'winbind']",
@@ -103,7 +101,7 @@ class samba::server::ads($ensure = present,
     path    => '/sbin/verify_active_directory',
     owner   => root,
     group   => root,
-    mode    => "0755",
+    mode    => '0755',
     content => template("${module_name}/verify_active_directory.erb"),
     require => [ Package[$krb5_user_package, $winbind_package, 'expect'],
       Augeas['samba-realm', 'samba-security', 'samba-winbind enum users',
@@ -116,7 +114,7 @@ class samba::server::ads($ensure = present,
     path    => '/sbin/configure_active_directory',
     owner   => root,
     group   => root,
-    mode    => "0755",
+    mode    => '0755',
     content => template("${module_name}/configure_active_directory.erb"),
     require => [ Package[$krb5_user_package, $winbind_package, 'expect'],
       Augeas['samba-realm', 'samba-security', 'samba-winbind enum users',

@@ -1,14 +1,16 @@
+# == Define samba::server::option
+#
 define samba::server::option ( $value = '' ) {
   $incl    = $samba::server::incl
   $context = $samba::server::context
   $target  = $samba::server::target
 
   $changes = $value ? {
-    ''      => "rm ${target}/$name",
-    default => "set \"${target}/$name\" \"$value\"",
+    ''      => "rm ${target}/${name}",
+    default => "set \"${target}/${name}\" \"${value}\"",
   }
 
-  augeas { "samba-$name":
+  augeas { "samba-${name}":
     incl    => $incl,
     lens    => 'Samba.lns',
     context => $context,
